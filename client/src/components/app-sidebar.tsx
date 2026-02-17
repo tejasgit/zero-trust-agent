@@ -7,6 +7,10 @@ import {
   Settings,
   Radio,
   Zap,
+  Gauge,
+  ShieldCheck,
+  VolumeX,
+  Grid3X3,
 } from "lucide-react";
 import {
   Sidebar,
@@ -24,10 +28,20 @@ import { Badge } from "@/components/ui/badge";
 import { useQuery } from "@tanstack/react-query";
 import type { Incident, SystemSettings } from "@shared/schema";
 
-const navItems = [
+const mainNav = [
   { title: "Dashboard", url: "/", icon: LayoutDashboard },
   { title: "Incidents", url: "/incidents", icon: AlertTriangle },
+];
+
+const ruleNav = [
+  { title: "Escalation Rules", url: "/escalation-rules", icon: Gauge },
+  { title: "Gating Rules", url: "/gating-rules", icon: ShieldCheck },
+  { title: "Suppression Rules", url: "/suppression-rules", icon: VolumeX },
+  { title: "Decision Matrix", url: "/decision-matrix", icon: Grid3X3 },
   { title: "Policy Engine", url: "/policies", icon: Shield },
+];
+
+const systemNav = [
   { title: "Audit Trail", url: "/audit", icon: ScrollText },
   { title: "Event Sources", url: "/sources", icon: Radio },
   { title: "Settings", url: "/settings", icon: Settings },
@@ -49,6 +63,38 @@ export function AppSidebar() {
   const openCount = incidents?.filter((i) => i.status === "open").length || 0;
   const maturityLevel = settings?.maturityLevel ?? 0;
 
+  function renderNav(items: typeof mainNav) {
+    return (
+      <SidebarMenu>
+        {items.map((item) => {
+          const isActive =
+            item.url === "/"
+              ? location === "/"
+              : location.startsWith(item.url);
+          return (
+            <SidebarMenuItem key={item.title}>
+              <SidebarMenuButton
+                asChild
+                isActive={isActive}
+                data-testid={`nav-${item.title.toLowerCase().replace(/\s+/g, "-")}`}
+              >
+                <Link href={item.url}>
+                  <item.icon className="w-4 h-4" />
+                  <span>{item.title}</span>
+                  {item.title === "Incidents" && openCount > 0 && (
+                    <Badge variant="destructive" className="ml-auto text-xs">
+                      {openCount}
+                    </Badge>
+                  )}
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          );
+        })}
+      </SidebarMenu>
+    );
+  }
+
   return (
     <Sidebar>
       <SidebarHeader className="p-4">
@@ -66,35 +112,21 @@ export function AppSidebar() {
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Navigation</SidebarGroupLabel>
+          <SidebarGroupLabel>Overview</SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu>
-              {navItems.map((item) => {
-                const isActive =
-                  item.url === "/"
-                    ? location === "/"
-                    : location.startsWith(item.url);
-                return (
-                  <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton
-                      asChild
-                      isActive={isActive}
-                      data-testid={`nav-${item.title.toLowerCase().replace(/\s+/g, "-")}`}
-                    >
-                      <Link href={item.url}>
-                        <item.icon className="w-4 h-4" />
-                        <span>{item.title}</span>
-                        {item.title === "Incidents" && openCount > 0 && (
-                          <Badge variant="destructive" className="ml-auto text-xs">
-                            {openCount}
-                          </Badge>
-                        )}
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                );
-              })}
-            </SidebarMenu>
+            {renderNav(mainNav)}
+          </SidebarGroupContent>
+        </SidebarGroup>
+        <SidebarGroup>
+          <SidebarGroupLabel>Rule Engine</SidebarGroupLabel>
+          <SidebarGroupContent>
+            {renderNav(ruleNav)}
+          </SidebarGroupContent>
+        </SidebarGroup>
+        <SidebarGroup>
+          <SidebarGroupLabel>System</SidebarGroupLabel>
+          <SidebarGroupContent>
+            {renderNav(systemNav)}
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>

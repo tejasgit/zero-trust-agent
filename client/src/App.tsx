@@ -15,6 +15,10 @@ import Policies from "@/pages/policies";
 import AuditTrail from "@/pages/audit";
 import Sources from "@/pages/sources";
 import Settings from "@/pages/settings";
+import EscalationRules from "@/pages/escalation-rules";
+import GatingRules from "@/pages/gating-rules";
+import SuppressionRules from "@/pages/suppression-rules";
+import DecisionMatrix from "@/pages/decision-matrix";
 
 function Router() {
   return (
@@ -23,6 +27,10 @@ function Router() {
       <Route path="/incidents" component={Incidents} />
       <Route path="/incidents/:id" component={IncidentDetail} />
       <Route path="/policies" component={Policies} />
+      <Route path="/escalation-rules" component={EscalationRules} />
+      <Route path="/gating-rules" component={GatingRules} />
+      <Route path="/suppression-rules" component={SuppressionRules} />
+      <Route path="/decision-matrix" component={DecisionMatrix} />
       <Route path="/audit" component={AuditTrail} />
       <Route path="/sources" component={Sources} />
       <Route path="/settings" component={Settings} />
