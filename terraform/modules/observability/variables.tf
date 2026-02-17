@@ -1,0 +1,10 @@
+variable "environment" { type = string }
+variable "project_name" { type = string }
+variable "aws_region" { type = string }
+variable "ingestion_lambda_name" { type = string }
+variable "triage_lambda_name" { type = string }
+variable "action_lambda_names" { type = map(string) }
+variable "api_gateway_name" { type = string }
+variable "api_gateway_id" { type = string }
+variable "incidents_table_name" { type = string }
+variable "sns_alert_email" { type = string }

@@ -1,0 +1,9 @@
+environment    = "dev"
+aws_region     = "us-east-1"
+project_name   = "zt-triage"
+okta_issuer_url = "https://your-org.okta.com/oauth2/default"
+okta_audience   = "api://triage-agent"
+vpc_cidr        = "10.0.0.0/16"
+availability_zones = ["us-east-1a", "us-east-1b"]
+bedrock_model_id   = "anthropic.claude-sonnet-4-5-20250514-v1:0"
+sns_alert_email    = ""

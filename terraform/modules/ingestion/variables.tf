@@ -1,0 +1,16 @@
+variable "environment" { type = string }
+variable "project_name" { type = string }
+variable "vpc_id" { type = string }
+variable "private_subnets" { type = list(string) }
+variable "security_group_id" { type = string }
+variable "api_gateway_id" { type = string }
+variable "api_gateway_arn" { type = string }
+variable "eventbridge_bus_arn" { type = string }
+variable "incidents_table_arn" { type = string }
+variable "incidents_table_name" { type = string }
+variable "audit_table_arn" { type = string }
+variable "audit_table_name" { type = string }
+variable "suppression_table_arn" { type = string }
+variable "suppression_table_name" { type = string }
+variable "webhook_secret_arn" { type = string }
+variable "lambda_role_arn" { type = string }

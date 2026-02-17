@@ -1,0 +1,16 @@
+variable "environment" { type = string }
+variable "project_name" { type = string }
+variable "vpc_id" { type = string }
+variable "private_subnets" { type = list(string) }
+variable "security_group_id" { type = string }
+variable "eventbridge_bus_arn" { type = string }
+variable "eventbridge_bus_name" { type = string }
+variable "audit_table_arn" { type = string }
+variable "audit_table_name" { type = string }
+variable "incidents_table_arn" { type = string }
+variable "incidents_table_name" { type = string }
+variable "lambda_role_arn" { type = string }
+variable "servicenow_secret_arn" { type = string }
+variable "pagerduty_secret_arn" { type = string }
+variable "slack_secret_arn" { type = string }
+variable "mim_secret_arn" { type = string }
