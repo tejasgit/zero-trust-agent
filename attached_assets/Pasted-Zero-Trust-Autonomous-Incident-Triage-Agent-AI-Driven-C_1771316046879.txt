@@ -1,0 +1,276 @@
+Zero-Trust Autonomous Incident Triage Agent
+AI-Driven Classification, Escalation, and MIM Orchestration
+
+Overview
+The Autonomous Triage Agent is an event-driven, zero-trust AI system that automatically classifies operational alerts across enterprise platforms and determines whether to:
+Create a ServiceNow incident
+
+
+Trigger PagerDuty escalation
+
+
+Initiate a Major Incident (MIM) process
+
+
+Route to human review when confidence is low
+
+
+The system uses structured AI reasoning (Amazon Bedrock) combined with deterministic policy enforcement, secure identity via Okta, and full audit logging.
+
+Problem It Solves
+Enterprise environments generate high-volume alerts from:
+Salesforce
+
+
+SnapLogic
+
+
+AWS workloads
+
+
+Adobe Experience Manager
+
+
+Splunk
+
+
+CloudWatch
+New Relic
+
+
+Manual triage creates:
+Slow response times
+
+
+Inconsistent classification
+
+
+MIM overuse or underuse
+
+
+Limited auditability of decisions
+
+
+This system provides consistent, explainable, policy-governed AI triage.
+
+Core Capabilities
+1. Event Correlation
+Ingests alerts from multiple sources and normalizes them into a unified triage schema.
+2. Context Enrichment
+Pulls:
+Relevant log slices from Splunk
+
+
+CloudWatch Logs Insights results
+
+
+Recent similar incidents from ServiceNow
+
+
+3. AI Classification (Structured Output Only)
+Bedrock model produces:
+Classification (noise, low, medium, high, sev1)
+
+
+Confidence score
+
+
+Recommended escalation actions
+
+
+Suggested assignment group
+
+
+Structured ServiceNow fields
+
+
+4. Deterministic Escalation Engine
+Applies policy thresholds such as:
+Confidence requirements
+
+
+Production-only auto-MIM gating
+
+
+Two-signal confirmation requirement
+
+
+Duplicate suppression window
+
+
+5. Zero Trust Authentication
+The agent authenticates using:
+Okta OAuth 2.0 Client Credentials
+
+
+Short-lived JWT tokens
+
+
+Scope-restricted API access
+
+
+Gateway-level validation
+
+
+All actions are attributable to the Triage Agent service identity.
+6. Full Audit Trail
+Each triage run logs:
+Trigger source
+
+
+Agent identity
+
+
+Evidence pointers
+
+
+AI output (hash + summary)
+
+
+Final decision
+
+
+SNOW / PD / MIM IDs
+
+
+Correlation ID
+
+
+Audit records are written to Splunk and CloudWatch.
+
+High-Level Architecture
+Event Sources
+(Salesforce, SnapLogic, AWS, AEM, Splunk)
+       ↓
+Amazon EventBridge
+       ↓
+AWS Step Functions (Orchestration)
+       ↓
+┌───────────────┬──────────────────┬──────────────────┐
+| Okta Token    | Context Enrich   | Bedrock Agent    |
+| (OAuth2 M2M)  | (Splunk + CW)    | (Structured JSON)|
+└───────────────┴──────────────────┴──────────────────┘
+       ↓
+Deterministic Policy Engine (Lambda)
+       ↓
+ServiceNow | PagerDuty | MIM | Human Review
+       ↓
+Audit Logs (Splunk + CloudWatch)
+
+Technology Stack
+AI & Reasoning
+Amazon Bedrock (Claude or Titan model)
+
+
+Structured JSON output contract
+
+
+Tool-enabled agent pattern
+
+
+Orchestration
+AWS Step Functions
+
+
+AWS Lambda
+
+
+Event Ingestion
+Amazon EventBridge
+
+
+CloudWatch Alarms
+
+
+Splunk alert webhooks
+
+
+Platform webhooks (SnapLogic, AEM, Salesforce)
+
+
+Identity & Zero Trust
+Okta (OIDC OAuth 2.0 Client Credentials)
+
+
+Short-lived JWT tokens
+
+
+Scope-based authorization
+
+
+JWKS validation
+
+
+Integration Layer
+API Gateway + Lambda “Triage Gateway”
+
+
+REST integrations to:
+
+
+ServiceNow Table API
+
+
+PagerDuty Events API
+
+
+Observability & Audit
+CloudWatch Logs
+
+
+Splunk (audit index + log enrichment)
+
+
+Correlation IDs across all calls
+
+
+State & Deduplication
+DynamoDB (incident signature suppression window)
+
+
+
+Governance & Risk Controls
+No automatic incident closure
+
+
+Confidence threshold gating
+
+
+Two-signal requirement for MIM
+
+
+Human override branch
+
+
+Rate limiting & circuit breakers
+
+
+Fail-closed behavior if identity validation fails
+
+
+
+Maturity Model
+The system should have toggles to allow us to implement a maturity model
+Level 0 – Manual triage
+ Level 1 – Alert-driven ticket creation
+ Level 2 – AI-assisted classification
+ Level 3 – Autonomous, policy-governed AI orchestration (target state)
+
+Strategic Value
+Reduces Mean Time To Triage (MTTT)
+
+
+Improves escalation consistency
+
+
+Minimizes unnecessary MIM events
+
+
+Strengthens zero-trust compliance posture
+
+
+Provides explainable AI decision audit trail
+
+
+Scales across multi-platform enterprise environments
+
