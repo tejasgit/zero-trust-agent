@@ -1,10 +1,19 @@
 import { db } from "./db";
-import { incidents, auditLogs, policyRules, eventSources, systemSettings } from "@shared/schema";
+import {
+  incidents, auditLogs, policyRules, eventSources, systemSettings,
+  escalationRules, gatingRules, suppressionRules, decisionMatrix,
+} from "@shared/schema";
 import { sql } from "drizzle-orm";
 
 export async function seedDatabase() {
   const [existingIncident] = await db.select().from(incidents).limit(1);
-  if (existingIncident) return;
+  const [existingEscRule] = await db.select().from(escalationRules).limit(1);
+
+  if (existingIncident && existingEscRule) return;
+  if (existingIncident) {
+    await seedRuleTables();
+    return;
+  }
 
   const now = new Date();
   const hoursAgo = (h: number) => new Date(now.getTime() - h * 60 * 60 * 1000);
@@ -249,5 +258,220 @@ export async function seedDatabase() {
     },
   ]);
 
+  await seedRuleTables();
+
   console.log("Database seeded successfully");
+}
+
+async function seedRuleTables() {
+  await db.insert(escalationRules).values([
+    {
+      name: "SEV1 Auto-Page + MIM",
+      description: "When AI classifies as SEV1 with high confidence, immediately page on-call and trigger Major Incident Management",
+      priority: 10,
+      enabled: true,
+      conditionClassification: "sev1",
+      conditionMinConfidence: 0.90,
+      conditionPriority: "critical",
+      actionType: "pagerduty-escalate",
+      actionTarget: "sre-oncall",
+      actionConfig: { urgency: "high", escalation_policy: "sev1-default", trigger_mim: true },
+    },
+    {
+      name: "High Severity ServiceNow INC",
+      description: "Create ServiceNow incident for all high-severity classifications with assignment to appropriate team",
+      priority: 20,
+      enabled: true,
+      conditionClassification: "high",
+      conditionMinConfidence: 0.80,
+      conditionPriority: "high",
+      actionType: "servicenow-create",
+      actionTarget: "platform-engineering",
+      actionConfig: { impact: "2", urgency: "2", category: "Infrastructure" },
+    },
+    {
+      name: "Medium Priority Slack Alert",
+      description: "Send Slack notification to incident channel for medium-priority incidents requiring awareness",
+      priority: 30,
+      enabled: true,
+      conditionClassification: "medium",
+      conditionMinConfidence: 0.70,
+      conditionPriority: "medium",
+      actionType: "slack-notify",
+      actionTarget: "#incident-triage",
+      actionConfig: { mention_group: "@infra-leads", thread: true },
+    },
+    {
+      name: "Low Confidence Human Review",
+      description: "Route incidents with low AI confidence to human review queue for manual triage",
+      priority: 50,
+      enabled: true,
+      conditionMaxConfidence: 0.70,
+      actionType: "human-review",
+      actionTarget: "triage-queue",
+      actionConfig: { sla_minutes: 30, notify_channel: "#triage-review" },
+    },
+    {
+      name: "Multi-Region Blast Radius Escalation",
+      description: "Escalate when source indicates multi-region impact regardless of initial classification",
+      priority: 15,
+      enabled: true,
+      conditionSource: "AWS CloudWatch",
+      conditionClassification: "high",
+      conditionMinConfidence: 0.85,
+      actionType: "pagerduty-escalate",
+      actionTarget: "cloud-infra-oncall",
+      actionConfig: { urgency: "high", include_runbook: true },
+    },
+  ]);
+
+  await db.insert(gatingRules).values([
+    {
+      name: "MIM Activation Gate",
+      description: "Require minimum 92% confidence and human approval before triggering Major Incident Management process",
+      enabled: true,
+      actionType: "mim-trigger",
+      minConfidence: 0.92,
+      requireHumanApproval: true,
+      approvalTimeout: 600,
+      fallbackAction: "queue",
+    },
+    {
+      name: "PagerDuty Page Gate",
+      description: "Allow auto-paging at 88% confidence without human approval for faster response times",
+      enabled: true,
+      actionType: "pagerduty-escalate",
+      minConfidence: 0.88,
+      requireHumanApproval: false,
+      approvalTimeout: 300,
+      fallbackAction: "slack-notify",
+    },
+    {
+      name: "ServiceNow INC Gate",
+      description: "Auto-create ServiceNow incidents at 75% confidence. Low-risk action, no approval needed",
+      enabled: true,
+      actionType: "servicenow-create",
+      minConfidence: 0.75,
+      requireHumanApproval: false,
+      approvalTimeout: 900,
+      fallbackAction: "queue",
+    },
+    {
+      name: "Slack Notification Gate",
+      description: "Allow Slack notifications at 60% confidence. Informational only, minimal blast radius",
+      enabled: true,
+      actionType: "slack-notify",
+      minConfidence: 0.60,
+      requireHumanApproval: false,
+      approvalTimeout: 0,
+      fallbackAction: "log",
+    },
+    {
+      name: "Auto-Suppress Gate",
+      description: "Require 95% confidence to auto-suppress. High bar prevents suppressing real incidents",
+      enabled: true,
+      actionType: "suppress",
+      minConfidence: 0.95,
+      requireHumanApproval: false,
+      approvalTimeout: 0,
+      fallbackAction: "human-review",
+    },
+  ]);
+
+  await db.insert(suppressionRules).values([
+    {
+      name: "New Relic Synthetic Flaps",
+      description: "Suppress transient synthetic monitor failures that auto-resolve within 10 minutes",
+      enabled: true,
+      sourcePattern: "New Relic",
+      titlePattern: "Synthetic Monitor.*Timeout",
+      suppressedCount: 47,
+    },
+    {
+      name: "Dev Account Billing Alerts",
+      description: "Suppress billing alerts from development and sandbox AWS accounts",
+      enabled: true,
+      sourcePattern: "AWS CloudWatch",
+      titlePattern: "Billing Alarm.*Development",
+      classificationPattern: "low|noise",
+      suppressedCount: 12,
+    },
+    {
+      name: "Maintenance Window - Weekend Deploys",
+      description: "Suppress expected alerts during scheduled weekend deployment windows",
+      enabled: false,
+      titlePattern: "Deploy|Deployment|Rolling Update",
+      timeWindowStart: "02:00",
+      timeWindowEnd: "06:00",
+      suppressedCount: 83,
+    },
+    {
+      name: "Known Flaky Health Checks",
+      description: "Suppress health check failures for services with known intermittent connectivity issues",
+      enabled: true,
+      sourcePattern: "Splunk|New Relic",
+      titlePattern: "Health Check.*Failed|Heartbeat.*Loss",
+      suppressedCount: 156,
+    },
+  ]);
+
+  await db.insert(decisionMatrix).values([
+    {
+      severity: "SEV1",
+      description: "Critical business impact - Complete service outage, data loss risk, or security breach affecting production",
+      createIncident: true,
+      triggerMim: true,
+      pageOncall: true,
+      nrSignal: "NRQL: error_rate > 50% OR availability < 95%",
+      exampleSources: "CloudWatch, PagerDuty, Salesforce (production)",
+      criteria: "Multi-region impact, revenue-affecting, customer-facing degradation >50%, security incident",
+      sortOrder: 1,
+    },
+    {
+      severity: "SEV2",
+      description: "Major impact - Significant degradation to critical business function, single region outage",
+      createIncident: true,
+      triggerMim: false,
+      pageOncall: true,
+      nrSignal: "NRQL: error_rate > 20% OR p99_latency > 5s",
+      exampleSources: "CloudWatch, SnapLogic, Splunk",
+      criteria: "Single region impact, partial service degradation, non-customer-facing critical path affected",
+      sortOrder: 2,
+    },
+    {
+      severity: "SEV3",
+      description: "Moderate impact - Non-critical service degradation, workaround available, limited user impact",
+      createIncident: true,
+      triggerMim: false,
+      pageOncall: false,
+      nrSignal: "NRQL: error_rate > 5% OR queue_depth > 10x baseline",
+      exampleSources: "AEM, Splunk, SnapLogic",
+      criteria: "Non-critical path affected, workaround exists, limited blast radius, no revenue impact",
+      sortOrder: 3,
+    },
+    {
+      severity: "SEV4",
+      description: "Low impact - Minor issue, cosmetic defect, or performance degradation within acceptable bounds",
+      createIncident: true,
+      triggerMim: false,
+      pageOncall: false,
+      nrSignal: "NRQL: error_rate > 1% OR cpu_usage > 80%",
+      exampleSources: "CloudWatch, New Relic",
+      criteria: "Non-production impact, minor degradation, informational alert, capacity planning",
+      sortOrder: 4,
+    },
+    {
+      severity: "Noise",
+      description: "No action required - Transient alert, known false positive, or duplicate of existing incident",
+      createIncident: false,
+      triggerMim: false,
+      pageOncall: false,
+      nrSignal: "N/A - Suppressed at ingestion",
+      exampleSources: "Any source with flapping pattern",
+      criteria: "Transient failure, auto-resolved, duplicate signature, maintenance window, known flaky check",
+      sortOrder: 5,
+    },
+  ]);
+
+  console.log("Rule tables seeded successfully");
 }

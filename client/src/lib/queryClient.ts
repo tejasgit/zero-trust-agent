@@ -1,5 +1,7 @@
 import { QueryClient, QueryFunction } from "@tanstack/react-query";
 
+const API_BASE = import.meta.env.VITE_API_BASE_URL || "";
+
 async function throwIfResNotOk(res: Response) {
   if (!res.ok) {
     const text = (await res.text()) || res.statusText;
@@ -7,16 +9,27 @@ async function throwIfResNotOk(res: Response) {
   }
 }
 
+function resolveUrl(url: string): string {
+  if (url.startsWith("http")) return url;
+  return `${API_BASE}${url}`;
+}
+
 export async function apiRequest(
   method: string,
   url: string,
   data?: unknown | undefined,
 ): Promise<Response> {
-  const res = await fetch(url, {
+  const headers: Record<string, string> = {};
+  if (data) headers["Content-Type"] = "application/json";
+
+  const token = typeof window !== "undefined" ? localStorage.getItem("okta_token") : null;
+  if (token) headers["Authorization"] = `Bearer ${token}`;
+
+  const res = await fetch(resolveUrl(url), {
     method,
-    headers: data ? { "Content-Type": "application/json" } : {},
+    headers,
     body: data ? JSON.stringify(data) : undefined,
-    credentials: "include",
+    credentials: API_BASE ? "omit" : "include",
   });
 
   await throwIfResNotOk(res);
@@ -29,8 +42,14 @@ export const getQueryFn: <T>(options: {
 }) => QueryFunction<T> =
   ({ on401: unauthorizedBehavior }) =>
   async ({ queryKey }) => {
-    const res = await fetch(queryKey.join("/") as string, {
-      credentials: "include",
+    const url = resolveUrl(queryKey.join("/") as string);
+    const headers: Record<string, string> = {};
+    const token = typeof window !== "undefined" ? localStorage.getItem("okta_token") : null;
+    if (token) headers["Authorization"] = `Bearer ${token}`;
+
+    const res = await fetch(url, {
+      headers,
+      credentials: API_BASE ? "omit" : "include",
     });
 
     if (unauthorizedBehavior === "returnNull" && res.status === 401) {
