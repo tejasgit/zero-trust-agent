@@ -19,6 +19,7 @@ import EscalationRules from "@/pages/escalation-rules";
 import GatingRules from "@/pages/gating-rules";
 import SuppressionRules from "@/pages/suppression-rules";
 import DecisionMatrix from "@/pages/decision-matrix";
+import Architecture from "@/pages/architecture";
 
 function Router() {
   return (
@@ -31,6 +32,7 @@ function Router() {
       <Route path="/gating-rules" component={GatingRules} />
       <Route path="/suppression-rules" component={SuppressionRules} />
       <Route path="/decision-matrix" component={DecisionMatrix} />
+      <Route path="/architecture" component={Architecture} />
       <Route path="/audit" component={AuditTrail} />
       <Route path="/sources" component={Sources} />
       <Route path="/settings" component={Settings} />

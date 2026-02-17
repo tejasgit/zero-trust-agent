@@ -11,6 +11,7 @@ import {
   ShieldCheck,
   VolumeX,
   Grid3X3,
+  Network,
 } from "lucide-react";
 import {
   Sidebar,
@@ -42,6 +43,7 @@ const ruleNav = [
 ];
 
 const systemNav = [
+  { title: "Architecture", url: "/architecture", icon: Network },
   { title: "Audit Trail", url: "/audit", icon: ScrollText },
   { title: "Event Sources", url: "/sources", icon: Radio },
   { title: "Settings", url: "/settings", icon: Settings },
