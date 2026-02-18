@@ -85,3 +85,14 @@ AI-driven incident classification, escalation, and Major Incident Management (MI
 - IAM permission boundaries on all Lambda roles
 - VPC endpoints for DynamoDB and Secrets Manager (no internet egress)
 - HMAC-SHA256 on webhooks, OKTA JWT on dashboard APIs
+
+## Documentation & Publications
+- `docs/TECHNICAL_SPECIFICATION.md` - 70+ page technical spec (architecture, security, APIs, Terraform, threat model)
+- `docs/ZTAIT_FRAMEWORK.md` - Formal ZTAIT Framework specification (maturity model, trust scoring, policy engine, compliance mapping)
+- `docs/ZTAIT_ARXIV_PAPER.md` - ArXiv paper draft (cs.CR/cs.AI) for academic publication
+- `attached_assets/Comparative_Analysis_*.pdf` - Competitive landscape analysis (EAAGF vs ZT-Agent frameworks)
+
+## Recent Changes
+- 2026-02-18: Created ZTAIT Framework specification document (docs/ZTAIT_FRAMEWORK.md)
+- 2026-02-18: Created ArXiv paper draft (docs/ZTAIT_ARXIV_PAPER.md)
+- 2026-02-17: Completed all 13 implementation tasks (dashboard, APIs, Terraform, seed data, Cloudflare deployment)
