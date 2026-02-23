@@ -167,4 +167,4 @@ This starts both the Express API server and Vite dev server on port 5000.
 
 ## License
 
-[To be determined by authors]
+MIT License (Personal Use Only) — See [LICENSE](LICENSE) for details. This software is provided for personal, educational, and non-commercial use only. Commercial use requires prior written permission from the copyright holder.
