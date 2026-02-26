@@ -1,0 +1,95 @@
+{
+  "evaluation_period": {
+    "start_date": "2026-01-15",
+    "end_date": "2026-02-13",
+    "duration_days": 30,
+    "maturity_level": "L1 (Assisted Mode)",
+    "additional_testing": "P3/P4 at L2 (Supervised Mode) for end-to-end verification"
+  },
+  "workload": {
+    "total_alerts": 14930,
+    "alerts_per_day_avg": 498,
+    "source_distribution": {
+      "aws-cloudwatch": {
+        "count": 3744,
+        "percentage": 25.1
+      },
+      "datadog": {
+        "count": 3735,
+        "percentage": 25
+      },
+      "newrelic": {
+        "count": 3729,
+        "percentage": 25
+      },
+      "splunk": {
+        "count": 3722,
+        "percentage": 24.9
+      }
+    },
+    "severity_distribution": {
+      "P1": {
+        "count": 531,
+        "percentage": 3.6
+      },
+      "P2": {
+        "count": 1704,
+        "percentage": 11.4
+      },
+      "P3": {
+        "count": 5459,
+        "percentage": 36.6
+      },
+      "P4": {
+        "count": 4449,
+        "percentage": 29.8
+      },
+      "noise": {
+        "count": 2787,
+        "percentage": 18.7
+      }
+    }
+  },
+  "trust_score_config": {
+    "weights": {
+      "w1": 0.5,
+      "w2": 0.15,
+      "w3": 0.25,
+      "w4": 0.1
+    },
+    "thresholds": {
+      "auto_execute": ">= 0.90",
+      "conditional": "0.70 - 0.89",
+      "human_review": "0.50 - 0.69",
+      "suppress": "< 0.50"
+    },
+    "calibration": "Example weights used without grid search (L1 evaluation, not L0 shadow mode)"
+  },
+  "observed_metrics": {
+    "suppression_rate": {
+      "value": 21.3,
+      "count": 3181,
+      "description": "Events filtered pre-classification by suppression rules"
+    },
+    "gating_activation_rate": {
+      "value": 12.9,
+      "count": 1925,
+      "description": "Actions routed to human review via gating rules"
+    },
+    "rule_evaluation_latency_p95_ms": 17,
+    "model_modifications": 0,
+    "policy_changes_total": 41,
+    "policy_changes_by_type": {
+      "escalation": 14,
+      "gating": 9,
+      "suppression": 12,
+      "decision_matrix": 6
+    }
+  },
+  "contribution_validated": "C4 (deterministic policy engine separability)",
+  "contributions_not_validated": [
+    "C1 (maturity model transitions)",
+    "C2 (trust score accuracy)",
+    "C3 (prompt injection defense)"
+  ]
+}

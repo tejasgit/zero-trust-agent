@@ -1,0 +1,42 @@
+change_id,timestamp,day,rule_type,action,description,operator,model_modification_required
+d9e5b622-e37a-4324-a132-3dd5489b4dff,2026-01-15T17:00:00.000Z,1,suppression,add,"Add suppression for CloudFront origin timeout noise",ravi.surampudi@example.com,false
+84bab761-c4d1-4bed-ad42-88d9be574b86,2026-01-16T15:00:00.000Z,2,escalation,add,"Add escalation rule for multi-source outage correlation",ravi.surampudi@example.com,false
+a6bc9b8e-a411-4602-9bf4-84fb9edc5e95,2026-01-17T10:00:00.000Z,3,gating,modify,"Lower MIM declaration trust threshold from 0.90 to 0.85",ravi.surampudi@example.com,false
+8a963ff4-b455-4417-bcbb-28210af77c84,2026-01-18T10:00:00.000Z,4,suppression,add,"Suppress Splunk forwarder connectivity during maintenance",ravi.surampudi@example.com,false
+697c8b0f-5324-4c09-a04e-0da8af19cc4a,2026-01-19T13:00:00.000Z,5,escalation,modify,"Reorder P2 escalation rules priority",ravi.surampudi@example.com,false
+0a803ecf-3373-497d-a1d1-15d728429aa7,2026-01-20T09:00:00.000Z,6,decision_matrix,modify,"Enable Slack notification for P3 incidents",ravi.surampudi@example.com,false
+57814e1a-9d92-49e6-8a8f-819e720a9513,2026-01-21T16:00:00.000Z,7,suppression,modify,"Extend CloudFront suppression time window",ravi.surampudi@example.com,false
+0ff8dcf1-7e55-4033-9846-b164430504ac,2026-01-22T09:00:00.000Z,8,escalation,add,"Add escalation for Datadog anomaly alerts",ravi.surampudi@example.com,false
+5fd27008-d390-463f-8315-137d5b7b9ead,2026-01-23T12:00:00.000Z,9,gating,modify,"Adjust P1 paging gating threshold to 0.92",ravi.surampudi@example.com,false
+1a3583d7-cd38-4f1c-a49f-793b83a1a1fd,2026-01-24T12:00:00.000Z,10,suppression,add,"Suppress New Relic synthetic monitor failures during deploy windows",ravi.surampudi@example.com,false
+28cc0747-c300-49d7-836e-a24044dd20d1,2026-01-25T13:00:00.000Z,11,escalation,modify,"Add confidence range condition to P1 escalation",ravi.surampudi@example.com,false
+eea53691-55b4-44fb-a790-e2e566491c8d,2026-01-26T15:00:00.000Z,12,gating,add,"Add gating rule for auto-MIM declaration",ravi.surampudi@example.com,false
+64a455a0-83c9-41f7-bcf8-b10ff31b6d33,2026-01-27T16:00:00.000Z,13,suppression,add,"Suppress known-benign S3 bucket access denied alerts",ravi.surampudi@example.com,false
+163d9078-a67b-4f67-a5c7-01c21b71f72a,2026-01-28T08:00:00.000Z,14,decision_matrix,modify,"Toggle MIM off for P2 Datadog source",ravi.surampudi@example.com,false
+7c8443fa-398a-4632-adc1-122ae27fd69b,2026-01-29T16:00:00.000Z,15,escalation,add,"Add escalation for security correlation events",ravi.surampudi@example.com,false
+6859abcd-a02a-46eb-96fc-416591c0f378,2026-01-30T12:00:00.000Z,16,suppression,modify,"Update regex for Splunk log ingestion suppression",ravi.surampudi@example.com,false
+19ca601d-c41d-4417-9dbf-0131eef60aad,2026-01-31T17:00:00.000Z,17,gating,modify,"Increase gating timeout from 10min to 15min",ravi.surampudi@example.com,false
+474ad505-73e5-43ac-9715-950c7f2c3512,2026-02-01T12:00:00.000Z,18,escalation,modify,"Modify P3 escalation to include Slack notify",ravi.surampudi@example.com,false
+f6f967fe-9dd6-414d-ab1f-fb55ffaff03d,2026-02-02T08:00:00.000Z,19,suppression,add,"Suppress ECS expected task recycling events",ravi.surampudi@example.com,false
+27f875cc-5f4f-4b7c-801a-0fbc57ca8358,2026-02-03T09:00:00.000Z,20,gating,modify,"Lower conditional threshold for off-hours",ravi.surampudi@example.com,false
+10a5167d-9c50-40db-b8fd-487a485740c4,2026-02-04T17:00:00.000Z,21,escalation,add,"Add P1 direct-page escalation for aws-cloudwatch",ravi.surampudi@example.com,false
+99c89e6f-b714-4d14-a74b-233b85a0c2e9,2026-02-04T17:00:00.000Z,21,decision_matrix,modify,"Enable page for P2 during business hours",ravi.surampudi@example.com,false
+d4e714eb-a8c0-4663-bd06-568140dc6f19,2026-02-05T12:00:00.000Z,22,suppression,modify,"Set expiry date on maintenance suppression rules",ravi.surampudi@example.com,false
+606c0702-a890-401b-9771-48e0029d0875,2026-02-06T10:00:00.000Z,23,escalation,modify,"Add source=splunk condition to security escalation",ravi.surampudi@example.com,false
+aeef67a1-de47-4af6-9355-af106e6d20d3,2026-02-07T16:00:00.000Z,24,gating,modify,"Tighten MIM gating to T>=0.93",ravi.surampudi@example.com,false
+44d1f9f6-31f6-4332-82ac-beee330e6c83,2026-02-07T16:00:00.000Z,24,suppression,add,"Suppress DynamoDB throttle alerts under 100 events",ravi.surampudi@example.com,false
+893e9eb1-9937-4e2b-8578-5a69d413f981,2026-02-08T14:00:00.000Z,25,escalation,add,"Add cross-source P1 correlation escalation",ravi.surampudi@example.com,false
+b280de5d-963f-4aa3-b4c1-8053bfc4e3f9,2026-02-09T09:00:00.000Z,26,suppression,modify,"Narrow time window on deploy suppression rules",ravi.surampudi@example.com,false
+ccbbd121-cfc4-404b-ac66-bd3b672e1aaa,2026-02-09T08:00:00.000Z,26,gating,modify,"Add fallback=auto-suppress for stale gating approvals",ravi.surampudi@example.com,false
+23857143-1793-4da7-b1f3-08b26c5d26ad,2026-02-10T09:00:00.000Z,27,decision_matrix,modify,"Disable MIM for P3 (was accidentally enabled day 6)",ravi.surampudi@example.com,false
+99fb2fd3-5bac-4a42-9f2b-9618ea659c27,2026-02-11T11:00:00.000Z,28,escalation,modify,"Adjust priority ordering for NewRelic escalations",ravi.surampudi@example.com,false
+0b5b3172-f5e9-4bd7-9746-07dc1eefd5e5,2026-02-11T14:00:00.000Z,28,suppression,add,"Suppress browser JS error noise from staging domain",ravi.surampudi@example.com,false
+91904b57-19b8-4473-aba6-8b76677ae188,2026-02-12T16:00:00.000Z,29,escalation,add,"Add escalation for workload health degradation",ravi.surampudi@example.com,false
+6961fe07-f815-4c6b-bc3c-6e5c3ef04e25,2026-02-12T11:00:00.000Z,29,gating,add,"Add gating for auto-page on P2 security events",ravi.surampudi@example.com,false
+9784ff52-c4a8-44e0-b43f-7b0cfc598505,2026-02-12T09:00:00.000Z,29,suppression,modify,"Update cart-abandonment suppression pattern",ravi.surampudi@example.com,false
+defbc258-3075-46f0-b948-3e52ae3cd37f,2026-02-13T11:00:00.000Z,30,decision_matrix,modify,"Final matrix review: confirm P1=INC+MIM+Page",ravi.surampudi@example.com,false
+5f1969c0-9b92-4185-a123-9296befdfd9c,2026-02-13T10:00:00.000Z,30,escalation,modify,"Final escalation rule audit and priority cleanup",ravi.surampudi@example.com,false
+7aaf5f26-7f1b-4a82-be65-e20596c3982c,2026-02-13T17:00:00.000Z,30,decision_matrix,modify,"Lock P4=log-only, remove accidental notify",ravi.surampudi@example.com,false
+c72c56c9-7736-4259-96b9-0c84536a2ba5,2026-02-13T14:00:00.000Z,30,escalation,add,"Add catch-all low-priority escalation for unmatched events",ravi.surampudi@example.com,false
+d21b53c2-d9b9-4ecc-80e7-bca833dafcf1,2026-02-13T12:00:00.000Z,30,escalation,modify,"Remove expired suppression-to-escalation migration rules",ravi.surampudi@example.com,false
+3c048c20-dc71-4fda-b899-6f97e2e476dc,2026-02-13T10:00:00.000Z,30,gating,modify,"Final gating threshold review and documentation",ravi.surampudi@example.com,false

@@ -1,0 +1,100 @@
+{
+  "generator": {
+    "name": "ztait-synthetic-workload-generator",
+    "version": "1.0.0",
+    "description": "Synthetic alert generator for ZTAIT evaluation",
+    "usage": "--alerts-per-day 500 --duration-days 30 --severity-distribution \"P1:3,P2:12,P3:35,P4:30,noise:20\""
+  },
+  "parameters": {
+    "alerts_per_day": 500,
+    "duration_days": 30,
+    "random_seed": 42,
+    "sources": [
+      {
+        "name": "aws-cloudwatch",
+        "weight": 0.25
+      },
+      {
+        "name": "datadog",
+        "weight": 0.25
+      },
+      {
+        "name": "newrelic",
+        "weight": 0.25
+      },
+      {
+        "name": "splunk",
+        "weight": 0.25
+      }
+    ],
+    "severity_distribution": {
+      "P1": 0.03,
+      "P2": 0.12,
+      "P3": 0.35,
+      "P4": 0.3,
+      "noise": 0.2
+    },
+    "alert_templates_per_source": 10
+  },
+  "trust_scoring": {
+    "weights": {
+      "w1": 0.5,
+      "w2": 0.15,
+      "w3": 0.25,
+      "w4": 0.1
+    },
+    "decision_thresholds": {
+      "auto_execute": 0.9,
+      "conditional": 0.7,
+      "human_review": 0.5,
+      "suppress": 0
+    },
+    "factor_defaults": {
+      "B_floor": 0.3,
+      "H_insufficient_data": 0.5,
+      "E_normal": 1,
+      "E_maintenance": 0.7,
+      "E_mass_failure": 0.6,
+      "E_off_hours": 0.8
+    }
+  },
+  "decision_matrix": {
+    "P1": {
+      "actions": [
+        "create_incident",
+        "declare_mim",
+        "page_oncall"
+      ],
+      "auto_page": true
+    },
+    "P2": {
+      "actions": [
+        "create_incident",
+        "page_oncall"
+      ],
+      "auto_page": true
+    },
+    "P3": {
+      "actions": [
+        "create_incident"
+      ],
+      "auto_page": false
+    },
+    "P4": {
+      "actions": [],
+      "auto_page": false
+    },
+    "noise": {
+      "actions": [],
+      "auto_page": false
+    }
+  },
+  "environment": {
+    "cloud_provider": "AWS",
+    "region": "us-east-1",
+    "ai_model": "Claude Sonnet 4.5 (AWS Bedrock)",
+    "infrastructure": "Terraform-provisioned (VPC, Lambda, DynamoDB, EventBridge)",
+    "dashboard": "React SPA on Cloudflare Pages",
+    "identity_provider": "OKTA"
+  }
+}
